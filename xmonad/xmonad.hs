@@ -35,7 +35,7 @@ main = do
   xmonad $ docks $ myConfig dzenLeftBar
 
 myConfig leftBar =
-  defaultConfig { terminal           = "gnome-terminal"
+  defaultConfig { terminal           = "kitty"
                 , modMask            = mod4Mask
                 , borderWidth        = 1
                 , focusedBorderColor = "red"
