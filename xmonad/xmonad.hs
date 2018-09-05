@@ -27,7 +27,7 @@ import           XMonad.Prompt.XMonad (xmonadPrompt)
 import qualified XMonad.Prompt as Prompt
 
 myXmonadBar = "dzen2 -dock -fn " <> myFont <> " -x '0' -y '-1' -h '24' -w '745' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
-myStatusBar = "conky -c ~/.conky_laptop_status | dzen2 -dock -fn " <> myFont <> " -y '-1' -w '650' -x -650 -ta 'l' -fg '#FFFFFF' -bg '#000000'"
+myStatusBar = "conky -c ~/.conkyrc | dzen2 -dock -fn " <> myFont <> " -y '-1' -w '650' -x -650 -ta 'l' -fg '#FFFFFF' -bg '#000000'"
 
 main = do
   dzenLeftBar <- spawnPipe myXmonadBar
