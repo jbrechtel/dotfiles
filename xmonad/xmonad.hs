@@ -64,7 +64,7 @@ newKeys conf@(XConfig {XMonad.modMask = modMask}) =
   , ((modMask .|. shiftMask, xK_j), spawn "/home/jbrechtel/bin/audio jabra")
   , ((modMask .|. shiftMask, xK_l), spawn "/home/jbrechtel/bin/audio logitech")
   , ((modMask .|. controlMask, xK_j), shiftNextScreen)
-  , ((modMask, xK_r ), windows $ W.focusMaster . W.swapUp)
+  , ((modMask, xK_Return ), windows $ W.focusMaster . W.swapUp)
   , ((modMask .|. shiftMask, xK_r ), spawn myRestartCmd)
   , ((modMask .|. shiftMask, xK_e ), refresh)
   , ((modMask .|. shiftMask, xK_q ), kill)
