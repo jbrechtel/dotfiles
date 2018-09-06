@@ -39,5 +39,5 @@ conky.config = {
 }
 
 conky.text = [[
-^fg(\#f70005)^fn(FontAwesome-20)^fn()$memperc%^fg() ^fg(\#30f9ff)^fn(FontAwesome-20)^fn() $wireless_essid ^fg()^fg(\#60f90d)^fn(FontAwesome-20)^fn() $battery_percent%^fg() $time 
+^fg(\#30f9ff)^fn(FontAwesome-20)^fn() $wireless_essid ^fg()^fg(\#f70005)^fn(FontAwesome-20)^fn()$memperc%^fg() ^fg(\#60f90d)^fn(FontAwesome-20)^fn() $battery_percent%^fg() $time 
 ]]
