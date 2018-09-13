@@ -26,8 +26,8 @@ import           XMonad.Prompt.Window (windowPrompt, allWindows, WindowPrompt(..
 import           XMonad.Prompt.XMonad (xmonadPrompt)
 import qualified XMonad.Prompt as Prompt
 
-myXmonadBar = "dzen2 -dock -fn " <> myFont <> " -x '0' -y '-1' -h '24' -w '745' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
-myStatusBar = "conky -c ~/.conkyrc | dzen2 -dock -fn " <> myFont <> " -y '-1' -w '850' -x -850 -ta 'r' -fg '#FFFFFF' -bg '#000000'"
+myXmonadBar = "dzen2 -dock -fn " <> myFont <> " -x '0' -y '-1' -w '920' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
+myStatusBar = "conky -c ~/.conkyrc | dzen2 -dock -fn " <> myFont <> " -y '-1' -w '1000' -x -1000 -ta 'r' -fg '#FFFFFF' -bg '#000000'"
 
 main = do
   dzenLeftBar <- spawnPipe myXmonadBar
@@ -63,6 +63,7 @@ newKeys conf@(XConfig {XMonad.modMask = modMask}) =
   , ((modMask, xK_d), spawn "/home/jbrechtel/bin/mydmenu")
   , ((modMask .|. shiftMask, xK_j), spawn "/home/jbrechtel/bin/audio jabra")
   , ((modMask .|. shiftMask, xK_l), spawn "/home/jbrechtel/bin/audio logitech")
+  , ((modMask, xK_t), spawn "clipmenu -fn 'Monoid-18'")
   , ((modMask .|. controlMask, xK_j), shiftNextScreen)
   , ((modMask, xK_Return ), windows $ W.focusMaster . W.swapUp)
   , ((modMask .|. shiftMask, xK_r ), spawn myRestartCmd)
@@ -82,8 +83,11 @@ myLayoutHook = avoidStruts $ screenCornerLayoutHook $ smartBorders
 myStartup :: X ()
 myStartup = do
   spawn "dunst"
+  spawn "compton"
   spawn "gnome-keyring-daemon --replace --daemonize --components=secrets,ssh,pcks11"
   spawn "xrandr --output DP-2 --rotate left --output DP-4 --primary --right-of DP-2 --auto"
+  spawn "feh --randomize --bg-fill ~/.wallpapers/*"
+  spawn "clipmenud"
   addScreenCorner SCLowerRight $ spawn "sflock"
 
 myEventHook e = do
