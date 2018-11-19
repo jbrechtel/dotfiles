@@ -2,50 +2,73 @@ import qualified Data.Map as M
 import           Data.List (intercalate)
 import           Data.List.Ordered (isSorted)
 import           Data.Maybe (isJust)
+import           System.Posix.Unistd          (getSystemID, nodeName)
 import qualified Text.Regex as R
 import           GHC.IO.Handle.Types          (Handle)
 import           XMonad
 import           XMonad.Actions.Search (promptSearch, duckduckgo)
+import           XMonad.Actions.OnScreen (viewOnScreen, toggleOnScreen, Focus(..))
+import           XMonad.Actions.CycleWS (toggleWS)
 import qualified XMonad.StackSet as W
 import           XMonad.Hooks.DynamicLog (PP(..), defaultPP, dynamicLogWithPP, dzenColor, pad, dzenEscape)
 import           XMonad.Hooks.ManageDocks (avoidStruts, docks, ToggleStruts(..))
 import           XMonad.Hooks.ManageHelpers (doFullFloat, isFullscreen)
 import           XMonad.Util.Run (spawnPipe, hPutStrLn)
 import           XMonad.Layout.PerWorkspace (onWorkspace)
+import           XMonad.Layout.PerScreen (ifWider)
 import           XMonad.Layout.Named (named)
 import           XMonad.Layout.GridVariants (TallGrid (..))
 import           XMonad.Layout.Accordion (Accordion(..))
-import           XMonad.Layout.NoBorders (noBorders, smartBorders)
-import           XMonad.Actions.CycleWS (shiftNextScreen)
+import           XMonad.Layout.NoBorders (noBorders, withBorder)
+import           XMonad.Layout.SimpleFloat
 import           XMonad.Actions.CycleWindows (rotFocusedUp)
 import           XMonad.Hooks.ScreenCorners (ScreenCorner(..), addScreenCorner, screenCornerLayoutHook, screenCornerEventHook)
 import           XMonad.Hooks.FadeInactive (fadeInactiveLogHook)
+import           XMonad.Hooks.WorkspaceHistory (workspaceHistoryHook)
+import           XMonad.Hooks.EwmhDesktops (ewmh)
 import           XMonad.Prompt.Pass (passPrompt)
 import           XMonad.Prompt.Workspace (workspacePrompt)
 import           XMonad.Prompt.Window (windowPrompt, allWindows, WindowPrompt(..))
 import           XMonad.Prompt.XMonad (xmonadPrompt)
 import qualified XMonad.Prompt as Prompt
+import           System.Exit (exitWith, ExitCode(ExitSuccess))
 
-myXmonadBar = "dzen2 -dock -fn " <> myFont <> " -x '0' -y '-1' -w '920' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
-myStatusBar = "conky -c ~/.conkyrc | dzen2 -dock -fn " <> myFont <> " -y '-1' -w '1000' -x -1000 -ta 'r' -fg '#FFFFFF' -bg '#000000'"
+myXmonadBar Laptop = "dzen2 -xs 1 -dock -fn " <> myFont <> " -x '0' -y '-1' -w '920' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
+myXmonadBar Desktop = "dzen2 -xs 1 -dock -fn " <> myFont <> " -x '0' -y '-1' -w '820' -ta 'l' -fg '#FFFFFF' -bg '#000000'"
+
+myStatusBar Laptop = "conky -c ~/.conkyrc | dzen2 -xs 1 -dock -fn " <> myFont <> " -y '-1' -w '1000' -x -1000 -ta 'r' -fg '#FFFFFF' -bg '#000000'"
+myStatusBar Desktop = "conky -c ~/.conkyrc | dzen2 -xs 1 -dock -fn " <> myFont <> " -y '-1' -w '1740' -x -1740 -ta 'r' -fg '#FFFFFF' -bg '#000000'"
+
+data MachineType
+  = Desktop
+  | Laptop
+
+machineType :: String -> MachineType
+machineType "dev" = Desktop
+machineType "cecil" = Laptop
+machineType "bojack" = Laptop
+machineType _ = Desktop
 
 main = do
-  dzenLeftBar <- spawnPipe myXmonadBar
-  dzenRightBar <- spawnPipe myStatusBar
-  xmonad $ docks $ myConfig dzenLeftBar
+  mType <- fmap (machineType . nodeName) getSystemID
+  dzenLeftBar <- spawnPipe $ myXmonadBar mType
+  dzenRightBar <- spawnPipe $ myStatusBar mType
+  xmonad $ docks $ ewmh $ myConfig dzenLeftBar
 
 myConfig leftBar =
   defaultConfig { terminal           = "kitty"
                 , modMask            = mod4Mask
                 , borderWidth        = 1
-                , focusedBorderColor = "red"
+                , focusedBorderColor = "#f8f9d1"
+                , normalBorderColor  = "#333333"
                 , focusFollowsMouse  = False
+--                , mouseBindings      = mouseBindings
                 , startupHook        = myStartup
                 , layoutHook         = myLayoutHook
                 , workspaces         = myWorkspaces
                 , keys               = myKeys
                 , handleEventHook    = myEventHook
-                , logHook            = myLogHook leftBar >> fadeInactiveLogHook 0xdddddddd
+                , logHook            = myLogHook leftBar >> workspaceHistoryHook >> fadeInactiveLogHook 0xf0000000
                 , manageHook         = myManageHook
                 }
 
@@ -58,34 +81,65 @@ myKeys conf = M.union (M.fromList (newKeys conf)) (keys def conf)
 
 newKeys conf@(XConfig {XMonad.modMask = modMask}) =
   [ ((modMask, xK_p), passPrompt xPrompt)
-  , ((modMask, xK_w), workspacePrompt xPrompt (windows . W.shift))
-  , ((modMask .|. shiftMask, xK_w), windowPrompt xPrompt Goto allWindows)
+--  , ((modMask, xK_w), toggleWS)
+  , ((modMask, xK_w), windows $ toggleOnScreen 0 "web")
+  , ((modMask .|. controlMask, xK_w), windows $ toggleOnScreen 1 "web")
   , ((modMask, xK_d), spawn "/home/jbrechtel/bin/mydmenu")
   , ((modMask .|. shiftMask, xK_j), spawn "/home/jbrechtel/bin/audio jabra")
   , ((modMask .|. shiftMask, xK_l), spawn "/home/jbrechtel/bin/audio logitech")
   , ((modMask, xK_t), spawn "clipmenu -fn 'Monoid-18'")
-  , ((modMask .|. controlMask, xK_j), shiftNextScreen)
+--  , ((modMask .|. controlMask, xK_j), swapTo Next)
   , ((modMask, xK_Return ), windows $ W.focusMaster . W.swapUp)
   , ((modMask .|. shiftMask, xK_r ), spawn myRestartCmd)
   , ((modMask .|. shiftMask, xK_e ), refresh)
   , ((modMask .|. shiftMask, xK_q ), kill)
+  , ((modMask .|. shiftMask .|. controlMask, xK_q ), io (exitWith ExitSuccess))
   , ((modMask .|. shiftMask, xK_x ), xmonadPrompt xPrompt)
   , ((modMask, xK_s ), promptSearch xPrompt duckduckgo)
   , ((modMask, xK_f), sendMessage ToggleStruts)
-  ]
+  , ((modMask .|. shiftMask, xK_t ), withFocused $ windows . W.sink)
+--  , ((modMask .|. controlMask, xK_1), setFocus $ FocusTag "web")
+  ] ++ (perScreenKeys conf modMask)
 
-myLayoutHook = avoidStruts $ screenCornerLayoutHook $ smartBorders
+-- mouseBindings =
+--     -- mod-button1, Set the window to floating mode and move by dragging
+--     [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
+--                                        >> windows W.shiftMaster))
+
+    -- mod-button2, Raise the window to the top of the stack
+--     , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
+
+    -- mod-button3, Set the window to floating mode and resize by dragging
+--     , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
+--                                        >> windows W.shiftMaster))
+
+
+perScreenKeys conf modMask =
+   [ ((m .|. modMask, k), windows (f i))
+      | (i, k) <- zip (workspaces conf) ([xK_1 .. xK_9] ++ [xK_0])
+      , (f, m) <- [ (viewOnScreen 0, 0)
+                  , (viewOnScreen 1, controlMask)
+                  , (W.greedyView, controlMask .|. shiftMask) ]
+    ]
+
+myLayoutHook = avoidStruts $ screenCornerLayoutHook
   $ onWorkspace "web" (noBorders Full)
-  $ onWorkspace "term" (Tall 1 (3/100) (2/3))
-  $ onWorkspace "editor" (Tall 1 (3/100) (3/4))
-  $ (named "default" (Tall 1 (3/100) (5/7))) ||| Accordion
+  $ onWorkspace "term" normalGrid
+  $ onWorkspace "editor" normalGrid
+  $ onWorkspace "music" (Tall 1 (3/100) (3/4))
+--  $ onWorkspace "steam" (fullscreenFloat $ fullscreenFull $ Full)
+  $ normalGrid
+
+  where
+    normalGrid = ifWider 1280 wideMonitorGrid tallMonitorGrid
+    wideMonitorGrid = Tall 1 (3/100) (1/2) ||| Full
+    tallMonitorGrid = (Mirror (Tall 1 (3/100) (1/2)))
 
 myStartup :: X ()
 myStartup = do
   spawn "dunst"
-  spawn "compton"
   spawn "gnome-keyring-daemon --replace --daemonize --components=secrets,ssh,pcks11"
-  spawn "xrandr --output DP-2 --rotate left --output DP-4 --primary --right-of DP-2 --auto"
+  spawn "xrandr --output DP-4 --rotate left --output DP-2 --primary --right-of DP-4 --auto"
   spawn "feh --randomize --bg-fill ~/.wallpapers/*"
   spawn "clipmenud"
   addScreenCorner SCLowerRight $ spawn "sflock"
@@ -117,7 +171,6 @@ myManageHook = composeAll . concat $
     , [className =? x --> doF (W.shift "music") | x <- myMediaShift]
     , [className =? x --> doF (W.shift "work") | x <- myWorkShift]
     , [className =? x --> doFloat | x <- myFloats]
-    , [isFullscreen --> makeFullscreen]
     ]
 
   where
@@ -143,7 +196,6 @@ xPrompt =
                        , Prompt.maxComplRows = Just 5
                        , Prompt.position = Prompt.Top
                        , Prompt.searchPredicate = fuzzyPredicate
-                       , Prompt.autoComplete = Just 5000
                        , Prompt.bgHLight = "black"
                        , Prompt.bgColor = "black"
                        , Prompt.fgHLight = "white"
@@ -153,5 +205,5 @@ xPrompt =
 fuzzyPredicate :: String -> String -> Bool
 fuzzyPredicate compl cand =
   let singleton a = [a]
-      regex = R.mkRegex $ intercalate ".*" $ singleton <$> compl
+      regex = R.mkRegex $ ".*" <> compl <> ".*"
    in isJust $ R.matchRegex regex cand

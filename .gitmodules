@@ -1,3 +1,6 @@
 [submodule "vim_dotfiles"]
 	path = vim_dotfiles
 	url = git@github.com:jbrechtel/vim_dotfiles.git
+[submodule "vimstone"]
+	path = vimstone
+	url = git@github.com:flipstone/vimstone.git
