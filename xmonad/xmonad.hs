@@ -53,9 +53,9 @@ main = do
   mType <- fmap (machineType . nodeName) getSystemID
   dzenLeftBar <- spawnPipe $ myXmonadBar mType
   dzenRightBar <- spawnPipe $ myStatusBar mType
-  xmonad $ docks $ ewmh $ myConfig dzenLeftBar
+  xmonad $ docks $ ewmh $ myConfig mType dzenLeftBar
 
-myConfig leftBar =
+myConfig machineType leftBar =
   defaultConfig { terminal           = "alacritty"
                 , modMask            = mod4Mask
                 , borderWidth        = 1
@@ -63,7 +63,7 @@ myConfig leftBar =
                 , normalBorderColor  = "#333333"
                 , focusFollowsMouse  = False
                 , mouseBindings      = myMouseBindings
-                , startupHook        = myStartup
+                , startupHook        = (myStartup machineType)
                 , layoutHook         = myLayoutHook
                 , workspaces         = myWorkspaces
                 , keys               = myKeys
@@ -126,12 +126,17 @@ myLayoutHook = avoidStruts $ screenCornerLayoutHook
     wideMonitorGrid = Tall 1 (3/100) (1/2) ||| Full
     tallMonitorGrid = (Mirror (Tall 1 (3/100) (1/2)))
 
-myStartup :: X ()
-myStartup = do
+myStartup :: MachineType -> X ()
+myStartup machineType = do
   spawn "dunst"
   spawn "gnome-keyring-daemon --replace --daemonize --components=secrets,ssh,pcks11"
   spawn "xrandr --output DP-4 --rotate left --output DP-2 --primary --right-of DP-4 --auto"
   spawn "feh --randomize --bg-fill ~/.wallpapers/*"
+
+  case machineType of
+    Laptop -> spawn "/home/jbrechtel/bin/start_compton"
+    Desktop -> pure ()
+
   addScreenCorner SCLowerRight $ spawn "sflock"
 
 myEventHook e = do

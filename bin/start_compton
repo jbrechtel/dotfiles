@@ -1,0 +1,3 @@
+#!/bin/sh
+
+killall compton; compton --inactive-dim 0.2 -b
