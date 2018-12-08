@@ -62,7 +62,7 @@ myConfig machineType leftBar =
                 , focusedBorderColor = "#f8f9d1"
                 , normalBorderColor  = "#333333"
                 , focusFollowsMouse  = False
-                , mouseBindings      = myMouseBindings
+                , mouseBindings      = (const M.empty)
                 , startupHook        = (myStartup machineType)
                 , layoutHook         = myLayoutHook
                 , workspaces         = myWorkspaces
@@ -99,11 +99,6 @@ newKeys conf@(XConfig {XMonad.modMask = modMask}) =
   , ((modMask .|. shiftMask, xK_t ), withFocused $ windows . W.sink)
 --  , ((modMask .|. controlMask, xK_1), setFocus $ FocusTag "web")
   ] ++ (perScreenKeys conf modMask)
-
-myMouseBindings :: XConfig Layout -> M.Map (KeyMask, Button) (Window -> X ())
-myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.empty
-
-
 
 perScreenKeys conf modMask =
    [ ((m .|. modMask, k), windows (f i))
