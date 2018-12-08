@@ -8,7 +8,7 @@ import           GHC.IO.Handle.Types          (Handle)
 import           XMonad
 import           XMonad.Actions.Search (promptSearch, duckduckgo)
 import           XMonad.Actions.OnScreen (viewOnScreen, toggleOnScreen, Focus(..))
-import           XMonad.Actions.CycleWS (toggleWS)
+import           XMonad.Actions.CycleWS (toggleWS, swapNextScreen)
 import qualified XMonad.StackSet as W
 import           XMonad.Hooks.DynamicLog (PP(..), defaultPP, dynamicLogWithPP, dzenColor, pad, dzenEscape)
 import           XMonad.Hooks.ManageDocks (avoidStruts, docks, ToggleStruts(..))
@@ -94,6 +94,7 @@ newKeys conf@(XConfig {XMonad.modMask = modMask}) =
   , ((modMask .|. shiftMask, xK_q ), kill)
   , ((modMask .|. shiftMask .|. controlMask, xK_q ), io (exitWith ExitSuccess))
   , ((modMask .|. shiftMask, xK_x ), xmonadPrompt xPrompt)
+  , ((modMask, xK_x ), swapNextScreen)
   , ((modMask, xK_s ), promptSearch xPrompt duckduckgo)
   , ((modMask, xK_f), sendMessage ToggleStruts)
   , ((modMask .|. shiftMask, xK_t ), withFocused $ windows . W.sink)
