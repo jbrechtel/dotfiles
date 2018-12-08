@@ -56,13 +56,13 @@ main = do
   xmonad $ docks $ ewmh $ myConfig dzenLeftBar
 
 myConfig leftBar =
-  defaultConfig { terminal           = "kitty"
+  defaultConfig { terminal           = "alacritty"
                 , modMask            = mod4Mask
                 , borderWidth        = 1
                 , focusedBorderColor = "#f8f9d1"
                 , normalBorderColor  = "#333333"
                 , focusFollowsMouse  = False
---                , mouseBindings      = mouseBindings
+                , mouseBindings      = myMouseBindings
                 , startupHook        = myStartup
                 , layoutHook         = myLayoutHook
                 , workspaces         = myWorkspaces
@@ -87,7 +87,6 @@ newKeys conf@(XConfig {XMonad.modMask = modMask}) =
   , ((modMask, xK_d), spawn "/home/jbrechtel/bin/mydmenu")
   , ((modMask .|. shiftMask, xK_j), spawn "/home/jbrechtel/bin/audio jabra")
   , ((modMask .|. shiftMask, xK_l), spawn "/home/jbrechtel/bin/audio logitech")
-  , ((modMask, xK_t), spawn "clipmenu -fn 'Monoid-18'")
 --  , ((modMask .|. controlMask, xK_j), swapTo Next)
   , ((modMask, xK_Return ), windows $ W.focusMaster . W.swapUp)
   , ((modMask .|. shiftMask, xK_r ), spawn myRestartCmd)
@@ -101,17 +100,9 @@ newKeys conf@(XConfig {XMonad.modMask = modMask}) =
 --  , ((modMask .|. controlMask, xK_1), setFocus $ FocusTag "web")
   ] ++ (perScreenKeys conf modMask)
 
--- mouseBindings =
---     -- mod-button1, Set the window to floating mode and move by dragging
---     [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
---                                        >> windows W.shiftMaster))
+myMouseBindings :: XConfig Layout -> M.Map (KeyMask, Button) (Window -> X ())
+myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.empty
 
-    -- mod-button2, Raise the window to the top of the stack
---     , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
-
-    -- mod-button3, Set the window to floating mode and resize by dragging
---     , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
---                                        >> windows W.shiftMaster))
 
 
 perScreenKeys conf modMask =
@@ -141,7 +132,6 @@ myStartup = do
   spawn "gnome-keyring-daemon --replace --daemonize --components=secrets,ssh,pcks11"
   spawn "xrandr --output DP-4 --rotate left --output DP-2 --primary --right-of DP-4 --auto"
   spawn "feh --randomize --bg-fill ~/.wallpapers/*"
-  spawn "clipmenud"
   addScreenCorner SCLowerRight $ spawn "sflock"
 
 myEventHook e = do
