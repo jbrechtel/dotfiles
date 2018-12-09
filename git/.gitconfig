@@ -1,0 +1,42 @@
+[core]
+   safecrlf = true
+   pager = "less -FX"
+	excludesfile = /home/jbrechtel/.gitignore_global
+[alias]
+   co = checkout
+   ci = commit
+   st = status
+   br = branch
+   type = cat-file -t
+   dump = cat-file -p
+   fullhashlog = "log --graph --abbrev-commit '--format=format:%H %C(yellow)%ci%Creset %Cgreen%an%Creset | %s'"
+   w = whatchanged
+   unpushed = !"PROJ_BRANCH=$(git symbolic-ref HEAD | sed 's|refs/heads/||') && git log origin/$PROJ_BRANCH..HEAD"
+
+[color]
+   ui = auto
+   pager = true
+[color "status"]
+   added = yellow
+   changed = green
+   untracked = cyan
+[format]
+   pretty = format:'%Cred%h%Creset -%Cblue%an%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset'
+[user]
+	name = James Brechtel
+	email = jbrechtel@gmail.com
+[github]
+	user = jbrechtel
+[push]
+	default = nothing
+[diff]
+  tool = icdiff
+[difftool]
+  prompt = false
+[difftool "icdiff"]
+  cmd = /usr/bin/icdiff --line-numbers $LOCAL $REMOTE
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

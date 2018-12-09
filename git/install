@@ -1,0 +1,7 @@
+#!/bin/sh
+
+MYDIR="`dirname \"$0\"`"
+MYDIR="`( cd \"$MYDIR\" && pwd )`"
+
+ln -s $MYDIR/.gitconfig $HOME/.gitconfig
+ln -s $MYDIR/.gitignore_global $HOME/.gitignore_global
