@@ -1,0 +1,15 @@
+conky.config = {
+    out_to_console = true,
+    out_to_x = false,
+    out_to_stderr = false,
+    extra_newline = false,
+    own_window = false,
+    stippled_borders = 0,
+    update_interval = 1.0,
+    uppercase = false,
+    use_spacer = 'none',
+}
+
+conky.text = [[
+^fg(\#30f9ff)^fn(FontAwesome-20)^fn() $wireless_essid ^fg()^fg(\#f70005)^fn(FontAwesome-20)^fn()$memperc%^fg() ^fg(\#60f90d)^fn(FontAwesome-20)^fn() $battery_percent%^fg() $time 
+]]
