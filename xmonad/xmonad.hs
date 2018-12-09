@@ -56,7 +56,7 @@ main = do
   xmonad $ docks $ ewmh $ myConfig mType dzenLeftBar
 
 myConfig machineType leftBar =
-  defaultConfig { terminal           = "alacritty"
+  defaultConfig { terminal           = myTerm
                 , modMask            = mod4Mask
                 , borderWidth        = 1
                 , focusedBorderColor = "#f8f9d1"
@@ -71,6 +71,10 @@ myConfig machineType leftBar =
                 , logHook            = myLogHook leftBar >> workspaceHistoryHook >> fadeInactiveLogHook 0xf0000000
                 , manageHook         = myManageHook
                 }
+  where myTerm =
+          case machineType of
+            Desktop -> "alacritty"
+            Laptop  -> "WINIT_HIDPI_FACTOR=1 alacritty"
 
 myRestartCmd = "xmonad --recompile; killall dzen2; xmonad --restart; notify-send -t 500 'XMonad' '~/.xmonad/xmonad.hs reloaded'"
 
