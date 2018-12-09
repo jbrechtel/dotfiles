@@ -1,0 +1,19 @@
+#!/bin/sh
+
+dirs=$(find . -mindepth 1 -maxdepth 1 -type d)
+
+for d in $dirs
+do
+  if [ -x $d/install ]
+  then
+    echo "--------------------"
+    cat $d/install
+    echo ""
+    echo "--------------------"
+    read -p "Do you want to execute $d/install ?" yn
+    case $yn in
+      [y]* ) $d/install;;
+      [n]* ) echo "Skipping $d/install";;
+    esac
+  fi
+done

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+MYDIR="`dirname \"$0\"`"
+MYDIR="`( cd \"$MYDIR\" && pwd )`"
+
+TARGET=$HOME/.config/dunst
+mkdir -p $TARGET
+
+ln -s $MYDIR/dunstrc $TARGET/dunstrc
