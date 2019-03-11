@@ -61,7 +61,7 @@ myConfig machineType leftBar =
                 , borderWidth        = 1
                 , focusedBorderColor = "#f8f9d1"
                 , normalBorderColor  = "#333333"
-                , focusFollowsMouse  = False
+                , focusFollowsMouse  = True
                 , mouseBindings      = (const M.empty)
                 , startupHook        = (myStartup machineType)
                 , layoutHook         = myLayoutHook
@@ -73,8 +73,8 @@ myConfig machineType leftBar =
                 }
   where myTerm =
           case machineType of
-            Desktop -> "alacritty"
-            Laptop  -> "WINIT_HIDPI_FACTOR=1 alacritty"
+            Desktop -> "kitty"
+            Laptop  -> "WINIT_HIDPI_FACTOR=1 kitty"
 
 myRestartCmd = "xmonad --recompile; killall dzen2; xmonad --restart; notify-send -t 500 'XMonad' '~/.xmonad/xmonad.hs reloaded'"
 
@@ -130,7 +130,7 @@ myStartup :: MachineType -> X ()
 myStartup machineType = do
   spawn "dunst"
   spawn "gnome-keyring-daemon --replace --daemonize --components=secrets,ssh,pcks11"
-  spawn "xrandr --output DP-4 --rotate left --output DP-2 --primary --right-of DP-4 --auto"
+  spawn "xrandr --output DP-4 --output DP-2 --primary --right-of DP-4 --auto"
   spawn "feh --randomize --bg-fill ~/.wallpapers/*"
 
   case machineType of
