@@ -11,5 +11,5 @@ conky.config = {
 }
 
 conky.text = [[
-^fg(\#f70005)^fn(FontAwesome-20)^fn()$memperc%^fg()  ${time %F %r}
+^fg(\#11FF11) ${exec external_hostname_cached} ^fg() ^fg(\#f70005)^fn(FontAwesome-20)^fn()$memperc%^fg()  ${time %F %r}
 ]]

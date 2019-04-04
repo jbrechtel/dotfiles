@@ -1,3 +1,4 @@
 alias ll="ls -latrG"
 alias st="git status"
 alias rs="redshift -l 33.8004:-84.3865"
+alias dcr="docker-compose run --service-ports --rm $@"

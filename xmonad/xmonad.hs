@@ -73,8 +73,8 @@ myConfig machineType leftBar =
                 }
   where myTerm =
           case machineType of
-            Desktop -> "kitty"
-            Laptop  -> "WINIT_HIDPI_FACTOR=1 kitty"
+            Desktop -> "alacritty"
+            Laptop  -> "WINIT_HIDPI_FACTOR=1 alacritty"
 
 myRestartCmd = "xmonad --recompile; killall dzen2; xmonad --restart; notify-send -t 500 'XMonad' '~/.xmonad/xmonad.hs reloaded'"
 
