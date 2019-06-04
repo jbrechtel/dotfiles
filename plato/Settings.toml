@@ -1,0 +1,86 @@
+library-path = "/mnt/onboard"
+frontlight = true
+wifi = true
+auto-suspend = 15
+
+[intermission-images]
+suspend = "Foundation's Edge - Isaac Asimov (243).epub"
+
+[[frontlight-presets]]
+timestamp = 743
+lightsensorLevel = 309
+
+[frontlight-presets.frontlightLevels]
+intensity = 43.36283
+warmth = 0.0
+
+[[frontlight-presets]]
+timestamp = 795
+lightsensorLevel = 379
+
+[frontlight-presets.frontlightLevels]
+intensity = 94.59194
+warmth = 0.0
+
+[[frontlight-presets]]
+timestamp = 1263
+lightsensorLevel = 265
+
+[frontlight-presets.frontlightLevels]
+intensity = 4.6214356
+warmth = 98.82006
+
+[[frontlight-presets]]
+timestamp = 1368
+lightsensorLevel = 276
+
+[frontlight-presets.frontlightLevels]
+intensity = 11.012783
+warmth = 100.0
+
+[home]
+summary-size = 1
+second-column = "progress"
+hooks = []
+
+[reader]
+refresh-every = 24
+finished = "notify"
+epub-engine = "built-in"
+font-path = "/mnt/onboard/fonts"
+font-family = "Libertinus Serif"
+font-size = 11.0
+text-align = "left"
+margin-width = 8
+line-height = 1.2
+
+[import]
+unshare-trigger = true
+startup-trigger = true
+traverse-hidden = false
+allowed-kinds = ["fb2", "epub", "cbz", "djvu", "pdf"]
+category-providers = ["path"]
+
+[sketch]
+save-path = "Sketches"
+notify-success = true
+
+[sketch.pen]
+size = 2
+dynamic = true
+color = 0
+min-speed = 35.43307
+max-speed = 1800.0
+
+[calculator]
+font-size = 8.0
+margin-width = 2
+history-size = 4096
+
+[battery]
+warn = 10.0
+power-off = 3.0
+
+[frontlight-levels]
+intensity = 0.0
+warmth = 0.0
